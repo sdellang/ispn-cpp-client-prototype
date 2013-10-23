@@ -1,0 +1,75 @@
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/sviluppo/fililorenzo/git/async-db/lib/
+
+g++ -c src/asyncdb/put/OptionsParser.cpp -I ../cpp-client/include -I ../cpp-client/src -I src -o target/OptionsParser.o
+g++ -c src/asyncdb/put/Put.cpp -I ../cpp-client/include -I ../cpp-client/src -I src -o target/Put.o
+g++ -c src/asyncdb/exceptions/AsyncdbException.cpp -I ../cpp-client/include -I ../cpp-client/src -I src -o target/AsyncdbException.o
+g++ -c src/asyncdb/put/Timer.cpp -I ../cpp-client/include -I ../cpp-client/src -I src -o target/Timer.o
+g++ -c test/TestTimer.cpp -I src -o target/TestTimer.o
+g++ target/TestTimer.o target/Timer.o -o testTimer /usr/lib64/libboost_date_time-mt.so /usr/lib64/libboost_thread-mt.so
+g++ target/*.o -o asyncDbPut lib/libhotrod.so /usr/lib64/libboost_program_options-mt.so
+
+# TEST Scheduler
+g++ -c src/asyncdb/put/Timer.cpp -I ../cpp-client/include -I ../cpp-client/src -I src -o target/Timer.o
+g++ -c src/asyncdb/put/Scheduler.cpp -I ../cpp-client/include -I ../cpp-client/src -I src -o target/Scheduler.o
+g++ -c test/TestScheduler.cpp -I src -o target/TestScheduler.o
+g++ -c src/asyncdb/put/Listener.cpp -I ../cpp-client/include -I ../cpp-client/src -I src -o target/Listener.o
+
+g++ target/TestScheduler.o target/Timer.o target/Scheduler.o target/Listener.o -o testScheduler /usr/lib64/libboost_date_time-mt.so /usr/lib64/libboost_thread-mt.so
+
+# TEST HOTROD
+
+g++ -c DF_CMF/src/DF_CMF_QUOTE.cpp -o target/DF_CMF_QUOTE.o
+g++ -c test/Prova.cpp -I ../cpp-client/include -I ../cpp-client/src -I src -I DF_CMF/src -o target/Prova.o
+
+g++ target/DF_CMF_QUOTE.o target/Prova.o -o testHotRod lib/libhotrod.so
+
+### NEW ###
+
+g++ -c src/prototype/simulation/RateInterval.cpp -I src -o target/RateInterval.o
+g++ -c src/prototype/simulation/Rate.cpp -I src -o target/Rate.o
+g++ -c src/prototype/simulation/RateIter.cpp -I src -o target/RateIter.o
+g++ -c test/TestRate.cpp -I src -o target/TestRate.o
+
+g++ target/RateInterval.o target/Rate.o target/RateIter.o target/TestRate.o -o testRate
+
+# RANDOM
+
+g++ -c test/Random.cpp -I src -o target/Random.o
+g++ target/Random.o -lrt -o testRandom 
+
+g++ -c test/Random2.cpp -I src -o target/Random2.o
+g++ target/Random2.o -lrt -o testRandom2
+
+# CSV
+
+g++ -c src/prototype/util/CsvRowsIter.cpp -I src -o target/CsvRowsIter.o
+g++ -c src/prototype/util/CsvReader.cpp -I src -o target/CsvReader.o
+g++ -c test/TestCsvReader.cpp -I src -o target/TestCsvReader.o
+
+g++ target/CsvRowsIter.o target/CsvReader.o target/TestCsvReader.o -o testCsvReader
+
+g++ -c src/prototype/util/CsvWriter.cpp -I src -o target/CsvWriter.o
+g++ -c test/TestCsvWriter.cpp -I src -o target/TestCsvWriter.o
+
+g++ target/CsvRowsIter.o target/CsvWriter.o target/TestCsvWriter.o -o testCsvWriter
+
+# R-W VALUE
+
+g++ -c test/TestReadWriteValue.cpp -I src -o target/TestReadWriteValue.o
+g++ target/TestReadWriteValue.o -lrt -o testReadWriteValue
+
+# CSV
+
+g++ -c src/prototype/simulation/Worker.cpp -I src -o target/Worker.o
+g++ -c test/TestWorker.cpp -I src -o target/TestWorker.o
+
+g++ target/TestWorker.o target/Worker.o -o testWorker /usr/lib64/libboost_date_time-mt.so /usr/lib64/libboost_thread-mt.so
+
+#SCHEDULER
+
+g++ -c src/prototype/simulation/Scheduler.cpp -I ../cpp-client/include -I ../cpp-client/src -I src -o target/Scheduler.o
+g++ -c test/TestScheduler2.cpp -I src -o target/TestScheduler2.o
+
+
+g++ target/TestScheduler2.o target/Worker.o target/Scheduler.o target/Rate.o target/RateInterval.o target/RateIter.o -o testScheduler2 /usr/lib64/libboost_date_time-mt.so /usr/lib64/libboost_thread-mt.so
+

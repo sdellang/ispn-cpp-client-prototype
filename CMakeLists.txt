@@ -1,10 +1,15 @@
 cmake_minimum_required (VERSION 2.6)
 
-project (HotRodPrototipo C CXX)
+project (HotRodPrototipo CXX)
 
+set(Boost_USE_STATIC_LIBS OFF) 
+set(Boost_USE_MULTITHREADED ON)  
+set(Boost_USE_STATIC_RUNTIME OFF) 
+find_package(Boost 1.50.0 COMPONENTS system thread filesystem iostreams random timer) 
+if(Boost_FOUND)
+    Message("Boost FOUND")
+endif()
 include_directories ("${CMAKE_CURRENT_SOURCE_DIR}/src")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/src")
-
 
 if (CMAKE_COMPILER_IS_GNUCXX)
    set (COMPILER_FLAGS "-fvisibility=hidden -fvisibility-inlines-hidden")
@@ -29,14 +34,23 @@ if(WIN32 AND NOT CYGWIN)
   set (platform_libs ws2_32 Rpcrt4)
 endif(WIN32 AND NOT CYGWIN)
 
-# Select driver
-if(HOTROD_WINAPI)
-  set (platform_sources src/hotrod/sys/windows/Socket.cpp)
-else(HOTROD_WINAPI)
-  set (platform_sources src/hotrod/sys/posix/Socket.cpp)
-endif(HOTROD_WINAPI)
+add_library (
+  prototype SHARED
+  src/prototype/simulation/Rate.cpp
+  src/prototype/simulation/RateInterval.cpp
+  src/prototype/simulation/RateIter.cpp
+  src/prototype/simulation/Scheduler.cpp
+  src/prototype/simulation/Worker.cpp
+  src/prototype/util/CsvReader.cpp
+  src/prototype/util/CsvRowsIter.cpp
+  src/prototype/util/CsvWriter.cpp
+  src/prototype/util/Random.cpp
+)
 
 
-add_executable (simple src/Main.cpp)
-target_link_libraries (simple lib/hotrod)
+add_executable (prototest test/Random2.cpp)
 
+find_library(HOTROD NAMES libhotrod.so HINTS ${CMAKE_CURRENT_SOURCE_DIR}/lib)
+target_link_libraries (prototype ${HOTROD} ${platform_libs} ${Boost_LIBRARIES} rt)
+target_link_libraries (prototest prototype)
+add_test(prototest prototest)
